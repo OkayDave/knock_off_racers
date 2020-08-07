@@ -15,11 +15,11 @@ module Kor
     end
 
     def move
-      move_speed = (0..X_MOVEMENT).to_a.sample
+      move_speed = rand(0..X_MOVEMENT)
 
       self.angle = move_speed > 20 ? -25 : 0
 
-      self.x += (0..X_MOVEMENT).to_a.sample
+      self.x += move_speed
     end
 
     def draw
