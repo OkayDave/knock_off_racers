@@ -7,6 +7,7 @@ gemfile do
   source 'https://rubygems.org'
 
   gem 'gosu'
+  gem 'byebug'
 end
 
 require_relative 'kor/app'

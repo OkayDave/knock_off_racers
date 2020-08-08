@@ -8,22 +8,65 @@ module Kor
 
     def initialize
       super 1920, 1080
+      init_themes
+      init_ui
+      init_cars
+
       self.caption = 'Kor'
+    end
 
-      @background_image = Gosu::Image.new('assets/bg.jpg')
-      @finish_image = Gosu::Image.new('assets/finish.png', tileable: true)
-      @cars = []
-      @going = false
-
-      COLOURS.each_with_index do |colour, index|
-        @cars << Kor::Car.new(colour: colour, position: { x: 100, y: (index * 200) + 100 })
-      end
-
+    def init_ui
       @time_font = Gosu::Font.new(50)
       @winner_font = Gosu::Font.new(200)
       @start_time = 0
       @finished = false
       @winner = nil
+      @going = false
+      init_background_finish_images
+    end
+
+    def init_background_finish_images
+      @background_image = Gosu::Image.new(theme_image('bg.jpg'))
+      @finish_image = Gosu::Image.new(theme_image('finish.png'), tileable: true)
+    end
+
+    def init_cars
+      @cars = []
+
+      @current_theme_entities.each_with_index do |colour, index|
+        @cars << Kor::Car.new(colour: colour, position: { x: 100, y: (index * 200) + 100 }, app: self)
+      end
+    end
+
+    def init_themes
+      @theme_index = 0
+      @themes = Dir.glob('assets/themes/*')
+      @current_theme_entities = []
+      init_current_theme_entities
+    end
+
+    def theme_image(filename)
+      "#{current_theme}/#{filename}"
+    end
+
+    def current_theme
+      @themes[@theme_index]
+    end
+
+    def load_next_theme
+      @theme_index = (@theme_index + 1) % @themes.size
+      init_current_theme_entities
+      init_background_finish_images
+      @current_theme_entities.each_with_index do |image, index|
+        @cars[index].init_image(image)
+      end
+    end
+
+    def init_current_theme_entities
+      @current_theme_entities = []
+      Dir.each_child(current_theme) do |file|
+        @current_theme_entities << file.split('_')[1].split('.')[0] if file.include?('car')
+      end
     end
 
     def update
@@ -34,6 +77,7 @@ module Kor
 
       go! if Gosu.button_down?(Gosu::KB_RIGHT) && !@finished
       exit if Gosu.button_down? Gosu::KB_END
+      load_next_theme if Gosu.button_down? Gosu::KB_T
     end
 
     def draw

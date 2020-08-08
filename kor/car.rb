@@ -3,15 +3,21 @@
 module Kor
   # Car
   class Car
-    attr_accessor :colour, :x, :y, :image, :angle
+    attr_accessor :colour, :x, :y, :image, :angle, :theme, :app
     X_MOVEMENT = 30
 
-    def initialize(colour:, position:)
+    def initialize(colour:, position:, app:)
       self.colour = colour
       self.x = position[:x]
       self.y = position[:y]
-      self.image = Gosu::Image.new("assets/car_#{colour}.png")
+      self.theme = theme
       self.angle = 0
+      self.app = app
+      init_image(colour)
+    end
+
+    def init_image(colour)
+      self.image = Gosu::Image.new(app.theme_image("car_#{colour}.png"))
     end
 
     def move
