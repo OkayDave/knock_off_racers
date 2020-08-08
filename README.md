@@ -15,3 +15,5 @@ ruby kor.rb
 Make the cars go by pressing the Right Cursor Key.
 
 Shut everything down by holding the End key.
+
+Cycle through themes by pressing T.
